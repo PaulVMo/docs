@@ -35,12 +35,12 @@ Once you have your [Helium CLI Wallet](https://github.com/helium/helium-wallet-r
 
 :::warning
 
-It is best practice to not create your Helium CLI wallet on the same machine you're using for your Validator. We advise you do not do this.
+It is a best practice to create your Helium CLI wallet on a separate machine from the one where you will run your Validator.
 
 :::
 
 ```
-$ helium-wallet create basic --network testnet
+helium-wallet create basic --network testnet
 ```
 
 You'll be prompted to supply a new passphrase to complete it. This is used to encrypt/decrypt the `wallet.key` file, and is needed to sign transactions. **Don't lose it.**
@@ -58,7 +58,7 @@ This command will produce a `wallet.key` file on your machine, along with output
 Next, run the `info` command to get all the relevant details.
 
 ```
-$ helium-wallet info
+helium-wallet info
 ```
 
 The output will look similar to this:
@@ -98,7 +98,7 @@ To acquire them, head to [faucet.helium.wtf](https://faucet.helium.wtf/) and inp
 Once you've input your address, the Faucet will deliver just over `10000` TNT to your Testnet Wallet. This can take up to 10 minutes so please be patient. Make a cup of coffee, issue a compelling tweet, then check your wallet balance using the `balance` command:
 
 ```
-$ helium-wallet balance
+helium-wallet balance
 ```
 
 If all went to plan, you'll see this:
@@ -117,9 +117,15 @@ Glorious. You have the `10000` TNT to stake one validator, and a bit extra to co
 
 With TNT in hand, it's time to deploy and run the actual Validator (can also be referred to as `miner` as the validator is part of the `miner` code base).
 
-:::info
+:::warning
 
-If you haven't already, please review the [Validator Technical Requirements](/mine-hnt/validators/requirements)
+If you haven't already, please review the [Validator Technical Requirements](/mine-hnt/validators/requirements).  Specifically, on non-ARM systems `AVX` support is required. Verify that it exists on your host system by running the following:
+
+```
+grep avx /proc/cpuinfo
+```
+
+If nothing is returned from this command, your host system does not have AVX support and your validator may not be stable.
 
 :::
 
@@ -149,19 +155,6 @@ sudo usermod -aG docker $USER
 ```
 
 Log in and out of your account to apply these changes. You are now ready to use Docker.
-
-:::warning
-
-On amd64 systems `AVX` support is required. Verify that it exists on your host system by running the following:
-
-```
-grep avx /proc/cpuinfo
-grep avx2 /proc/cpuinfo
-```
-
-If nothing is returned from these commands, your host system does not have AVX support and your Validator may not be stable.
-
-:::
 
 Now that docker is installed and ready, let's run the Validator.
 
@@ -379,7 +372,7 @@ Now that your Validator node is running, the final step in the process is to for
 First, double check your wallet balance to make sure you have the `10000` TNT required to stake, along with a few extra to cover the transaction fees. (The faucet provides all of this.)
 
 ```
-$ helium-wallet balance
+helium-wallet balance
 
 +-----------------------------------------------------+----------------+--------------+-----------------+
 | Address                                             | Balance        | Data Credits | Security Tokens |
@@ -464,7 +457,7 @@ You should see JSON output that looks similar to this. You are looking for `"onl
 Note that you may need to adjust these if you're running in Docker.
 
 ```
-> miner info p2p_status
+miner info p2p_status
 
 +---------+------+
 |  name   |result|
@@ -482,7 +475,7 @@ Note that you may need to adjust these if you're running in Docker.
 - `height` is the currently synced block
 
 ```
-> miner peer book -s
+miner peer book -s
 
 +------------------------------------------------+-------------+----------+---------+---+----------+
 |                    address                     |    name     |listen_add|connectio|nat|last_updat|
@@ -543,7 +536,7 @@ Getting back on chain is easy now that you've got everything installed:
 
 #### Fund the Wallet
 
-- You do not need to delete and re-create the wallet.  The wallet balance will show `0`, since this is a new blockchain and you have no TNT.  If you happen to run `helium-wallet balance` and receive and error, give it a few minutes.  The API may still be restarting after pointing to the new chain.  Your wallet password is the same.
+- You do not need to delete and re-create the wallet.  The wallet balance will show `0`, since this is a new blockchain and you have no TNT.  If you happen to run `helium-wallet balance` and receive an error, give it a few minutes.  The API may still be restarting after pointing to the new chain.  Your wallet password is the same.
 - When the balance shows `0`, add funds to your wallet from the [Faucet](https://faucet.helium.wtf/) exactly how you performed the task earlier.  Follow the [Acquire TNT from the Testnet Faucet](/mine-hnt/validators/validator-deployment-guide#acquire-tnt-from-the-testnet-faucet) directions.
 
 #### Reset the Validator - Docker Edition
